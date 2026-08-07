@@ -12,36 +12,39 @@ interface Props<T> {
   rowKey?: keyof T | ((row: T) => string | number);
 }
 
-export default function TableBody<T>({
-  rows,
-  columns,
-  rowKey,
-}: Props<T>) {
-
- 
-
-  
+export default function TableBody<T>({ rows, columns, rowKey }: Props<T>) {
   return (
-    <tbody>
+    <>
       {rows.map((row, index) => (
-        <tr key={getRowKey(row, index, rowKey)}>
+        <tr
+          key={getRowKey(row, index, rowKey)}
+          className="
+            border-b
+            border-slate-100
+            transition-colors
+            hover:bg-slate-50
+          "
+        >
           {columns.map((column) => (
             <td
               key={String(column.key)}
-              className="border p-3"
+              className={`
+                px-6
+                py-4
+                align-middle
+                text-sm
+                text-slate-700
+                whitespace-nowrap
+                ${column.cellClassName ?? ""}
+              `}
             >
               {column.render
                 ? column.render(row)
-                : String(
-                    getValue(
-                      row,
-                      String(column.key)
-                    ) ?? ""
-                  )}
+                : String(getValue(row, String(column.key)) ?? "")}
             </td>
           ))}
         </tr>
       ))}
-    </tbody>
+    </>
   );
 }

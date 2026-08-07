@@ -8,7 +8,9 @@ export interface Column<T> {
 
   width?: number | string;
 
-  className?: string;
+  headerClassName?: string;
+
+  cellClassName?: string;
 
   searchable?: boolean;
 

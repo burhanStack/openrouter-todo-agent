@@ -3,6 +3,7 @@
 import { faker } from "@faker-js/faker";
 import dayjs from "dayjs";
 import { Column } from "@/components/DataTable";
+import StatusBadge from "@/components/DataTable/StatusBadge";
 
 export interface Order {
   orderNo: string;
@@ -12,23 +13,16 @@ export interface Order {
   orderDate: string;
 }
 
-export const orders: Order[] = Array.from(
-  { length: 250 },
-  () => ({
-    orderNo: faker.string.alphanumeric(8),
-    customer: faker.person.fullName(),
-    amount: faker.number.int({
-      min: 100,
-      max: 50000,
-    }),
-    paymentStatus: faker.helpers.arrayElement([
-      "Paid",
-      "Pending",
-      "Cancelled",
-    ]),
-    orderDate: faker.date.recent().toISOString(),
-  })
-);
+export const orders: Order[] = Array.from({ length: 250 }, () => ({
+  orderNo: faker.string.alphanumeric(8),
+  customer: faker.person.fullName(),
+  amount: faker.number.int({
+    min: 100,
+    max: 50000,
+  }),
+  paymentStatus: faker.helpers.arrayElement(["Paid", "Pending", "Cancelled"]),
+  orderDate: faker.date.recent().toISOString(),
+}));
 
 export const orderColumns: Column<Order>[] = [
   {
@@ -46,22 +40,23 @@ export const orderColumns: Column<Order>[] = [
     key: "amount",
     title: "Amount",
     sortable: true,
-    render: (row) =>
-      `₹${row.amount.toLocaleString()}`,
+    render: (row) => `₹${row.amount.toLocaleString()}`,
+    headerClassName: "text-right",
+
+    cellClassName: "text-right font-medium",
   },
   {
     key: "paymentStatus",
     title: "Payment",
     sortable: true,
     searchable: true,
+    render: (row) => <StatusBadge status={row.paymentStatus} />,
   },
   {
     key: "orderDate",
     title: "Order Date",
     sortable: true,
-    render: (row) =>
-      dayjs(row.orderDate).format("DD MMM YYYY"),
-    sortAccessor: (row) =>
-      new Date(row.orderDate),
+    render: (row) => dayjs(row.orderDate).format("DD MMM YYYY"),
+    sortAccessor: (row) => new Date(row.orderDate),
   },
 ];

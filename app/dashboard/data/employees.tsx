@@ -12,19 +12,16 @@ export interface Employee {
   joiningDate: string;
 }
 
-export const employees: Employee[] = Array.from(
-  { length: 150 },
-  () => ({
-    employeeId: faker.string.uuid().slice(0, 8),
-    name: faker.person.fullName(),
-    designation: faker.person.jobTitle(),
-    salary: faker.number.int({
-      min: 30000,
-      max: 200000,
-    }),
-    joiningDate: faker.date.past().toISOString(),
-  })
-);
+export const employees: Employee[] = Array.from({ length: 150 }, () => ({
+  employeeId: faker.string.uuid().slice(0, 8),
+  name: faker.person.fullName(),
+  designation: faker.person.jobTitle(),
+  salary: faker.number.int({
+    min: 30000,
+    max: 200000,
+  }),
+  joiningDate: faker.date.past().toISOString(),
+}));
 
 export const employeeColumns: Column<Employee>[] = [
   {
@@ -48,16 +45,15 @@ export const employeeColumns: Column<Employee>[] = [
     key: "salary",
     title: "Salary",
     sortable: true,
-    render: (row) =>
-      `₹${row.salary.toLocaleString()}`,
+    headerClassName: "text-right",
+    cellClassName: "text-right font-semibold",
+    render: (row) => `₹${row.salary.toLocaleString()}`,
   },
   {
     key: "joiningDate",
     title: "Joining",
     sortable: true,
-    render: (row) =>
-      dayjs(row.joiningDate).format("DD MMM YYYY"),
-    sortAccessor: (row) =>
-      new Date(row.joiningDate),
+    render: (row) => dayjs(row.joiningDate).format("DD MMM YYYY"),
+    sortAccessor: (row) => new Date(row.joiningDate),
   },
 ];

@@ -3,6 +3,7 @@
 import { faker } from "@faker-js/faker";
 import dayjs from "dayjs";
 import { Column } from "@/components/DataTable";
+import StatusBadge from "@/components/DataTable/StatusBadge";
 
 export interface Student {
   id: number;
@@ -16,28 +17,22 @@ export interface Student {
   };
 }
 
-export const students: Student[] = Array.from(
-  { length: 100 },
-  (_, index) => ({
-    id: index + 1,
-    name: faker.person.fullName(),
-    email: faker.internet.email(),
-    age: faker.number.int({ min: 18, max: 30 }),
-    status: faker.helpers.arrayElement([
-      "Active",
-      "Inactive",
+export const students: Student[] = Array.from({ length: 100 }, (_, index) => ({
+  id: index + 1,
+  name: faker.person.fullName(),
+  email: faker.internet.email(),
+  age: faker.number.int({ min: 18, max: 30 }),
+  status: faker.helpers.arrayElement(["Active", "Inactive"]),
+  createdAt: faker.date.past().toISOString(),
+  department: {
+    name: faker.helpers.arrayElement([
+      "Computer Science",
+      "Mechanical",
+      "Civil",
+      "Electronics",
     ]),
-    createdAt: faker.date.past().toISOString(),
-    department: {
-      name: faker.helpers.arrayElement([
-        "Computer Science",
-        "Mechanical",
-        "Civil",
-        "Electronics",
-      ]),
-    },
-  })
-);
+  },
+}));
 
 export const studentColumns: Column<Student>[] = [
   {
@@ -45,6 +40,7 @@ export const studentColumns: Column<Student>[] = [
     title: "ID",
     sortable: true,
     searchable: true,
+    width: 80,
   },
   {
     key: "name",
@@ -62,6 +58,8 @@ export const studentColumns: Column<Student>[] = [
     key: "age",
     title: "Age",
     sortable: true,
+    headerClassName: "text-center",
+    cellClassName: "text-center",
   },
   {
     key: "department.name",
@@ -74,25 +72,14 @@ export const studentColumns: Column<Student>[] = [
     title: "Status",
     sortable: true,
     searchable: true,
-    render: (row) => (
-      <span
-        className={`rounded px-2 py-1 text-white ${
-          row.status === "Active"
-            ? "bg-green-600"
-            : "bg-red-600"
-        }`}
-      >
-        {row.status}
-      </span>
-    ),
+    render: (row) => <StatusBadge status={row.status} />,
+    cellClassName: "text-center",
   },
   {
     key: "createdAt",
     title: "Created",
     sortable: true,
-    render: (row) =>
-      dayjs(row.createdAt).format("DD MMM YYYY"),
-    sortAccessor: (row) =>
-      new Date(row.createdAt),
+    render: (row) => dayjs(row.createdAt).format("DD MMM YYYY"),
+    sortAccessor: (row) => new Date(row.createdAt),
   },
 ];

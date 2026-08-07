@@ -8,6 +8,7 @@ import EmptyState from "./EmptyState";
 import LoadingState from "./LoadingState";
 import { useDataTable } from "./hooks/useDataTable";
 import { DataTableProps } from "./types";
+import DataTableCard from "./DataTableCard";
 
 export default function DataTable<T>({
   data,
@@ -21,40 +22,50 @@ export default function DataTable<T>({
     columns,
   });
 
-  if (loading)
-    return <LoadingState />;
+  if (loading) return <LoadingState />;
 
   return (
-    <div className="space-y-4">
+    <DataTableCard>
+      <div
+        className="
+          flex
+          items-center
+          justify-between
+          border-b
+          border-slate-200
+          p-5
+        "
+      >
+        <SearchInput onSearch={table.setSearch} />
+      </div>
 
-      {
-    searchable && (
-        <SearchInput
-            onSearch={table.setSearch}
-        />
-    )
-}
+      <div className="overflow-x-auto">
+        <table
+          className="
+            min-w-full
+            border-collapse
+          "
+        >
+          <TableHeader
+            columns={columns}
+            sortKey={table.sortKey}
+            sortDirection={table.sortDirection}
+            onSort={table.handleSort}
+          />
 
-      <table className="w-full">
-
-        <TableHeader
-          columns={columns}
-          sortKey={table.sortKey}
-          sortDirection={table.sortDirection}
-          onSort={table.handleSort}
-        />
-
-        <TableBody
-    rows={table.rows}
-    columns={columns}
-    rowKey={rowKey}
-/>
-
-      </table>
-
-      {table.rows.length === 0 && (
-        <EmptyState />
-      )}
+          <tbody>
+            {table.rows.length === 0 ? (
+              <tr>
+                <td colSpan={columns.length}>
+                  <EmptyState />
+                </td>
+              </tr>
+            ) : (
+              <TableBody rows={table.rows} columns={columns} rowKey={rowKey} />
+            )}
+          </tbody>
+        </table>
+      </div>
 
       <Pagination
         page={table.page}
@@ -66,7 +77,6 @@ export default function DataTable<T>({
         onPageChange={table.goToPage}
         onPageSizeChange={table.setPageSize}
       />
-
-    </div>
+    </DataTableCard>
   );
 }
